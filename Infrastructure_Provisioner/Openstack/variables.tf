@@ -7,12 +7,16 @@ variable "auth_region" { default = "RegionOne" }
 variable "auth_domain" { default = "default" }
 
 
-#Kuberntes Specifications
-
+#Openstack Instances Specifications
+variable "name" { description = "this value an aribitry name for Openstack objects" }
 variable "OS_IMG_ID" {}
 variable "OS_flavor_ID" {}
 variable "OS_CIDR" {}
+variable "OS_DNS" {}
+variable "OS_external_network_ID" {}
 
+
+#Kuberntes Specifications
 variable "Number_Of_Masters" {
   type = number
   default = 1
@@ -55,3 +59,5 @@ variable "registry_mirror" {
     type = string
     default = ""
 }
+
+#Security_Group ports
