@@ -61,3 +61,21 @@ variable "registry_mirror" {
 }
 
 #Security_Group ports
+variable "RKE-server-ports" {
+  type = list
+  default = [
+    "2379/tcp", "2380/tcp", "2381/tcp",
+    "9345/tcp", "6443/tcp"
+  ]
+}
+
+variable "RKE-share-ports" {
+  type = list
+  default = [
+    "8472/udp", "51820/udp", "51821/udp", "8472/udp", "4789/udp",
+    "10250/tcp", "9099/tcp", "5473/tcp", "9098/tcp", "9099/tcp", "179/tcp", "4240/tcp", 
+    "2379/tcp", "2380/tcp", "2381/tcp",
+    "30000-32767/tcp",
+    "1/icmp"
+  ]  
+}

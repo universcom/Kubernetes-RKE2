@@ -34,7 +34,37 @@ resource "openstack_networking_router_interface_v2" "kuberntes_router_interface_
 }
 
 ##### define security group #####
-resource "openstack_compute_secgroup_v2" "kuberntes_secgroup" {
+resource "openstack_compute_secgroup_v2" "kuberntes_secgroup_server" {
   depends_on = [openstack_networking_router_interface_v2.DBaaS_router_interface_1]
-  name        = "${var.name}_kuberntes_security_Group"
+  name        = "${var.name}_Server_kuberntes_security_Group"
+}
+
+resource "openstack_compute_secgroup_v2" "kuberntes_secgroup_share" {
+  depends_on = [openstack_networking_router_interface_v2.DBaaS_router_interface_1]
+  name        = "${var.name}_Share_kuberntes_security_Group"
+}
+
+##### Assign port to security group #####
+resource "openstack_networking_secgroup_rule_v2" "kubernetes_secgrouprule_server"{
+  depends_on = [openstack_compute_secgroup_v2.kuberntes_secgroup_server]
+  count = length(var.RKE-server-ports)
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = split("/",var.RKE-server-ports[count.index])[1]
+  port_range_min    = split("/",var.var.RKE-server-ports[count.index])[0] == "1" ? "1" : split("/",var.RKE-server-ports[count.index])[0]
+  port_range_max    = split("/",var.var.RKE-server-ports[count.index])[0] == "1" ? "65535" : split("/",var.RKE-server-ports[count.index])[0]
+  remote_ip_prefix  = "${var.OS_CIDR}"
+  security_group_id = "${openstack_compute_secgroup_v2.kuberntes_secgroup_server.id}"
+}
+
+resource "openstack_networking_secgroup_rule_v2" "kubernetes_secgrouprule_share"{
+  depends_on = [openstack_compute_secgroup_v2.kuberntes_secgroup_share]
+  count = length(var.RKE-share-ports)
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = split("/",var.RKE-share-ports[count.index])[1]
+  port_range_min    = split("/",var.RKE-share-ports[count.index])[0] == "1" ? "1" : split("/",var.RKE-share-ports[count.index])[0]
+  port_range_max    = split("/",var.RKE-share-ports[count.index])[0] == "1" ? "65535" : split("/",var.RKE-share-ports[count.index])[0]
+  remote_ip_prefix  = "${var.OS_CIDR}"
+  security_group_id = "${openstack_compute_secgroup_v2.kuberntes_secgroup_share.id}"
 }
