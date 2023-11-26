@@ -51,8 +51,8 @@ resource "openstack_networking_secgroup_rule_v2" "kubernetes_secgrouprule_server
   direction         = "ingress"
   ethertype         = "IPv4"
   protocol          = split("/",var.RKE-server-ports[count.index])[1]
-  port_range_min    = split("/",var.var.RKE-server-ports[count.index])[0] == "1" ? "1" : split("/",var.RKE-server-ports[count.index])[0]
-  port_range_max    = split("/",var.var.RKE-server-ports[count.index])[0] == "1" ? "65535" : split("/",var.RKE-server-ports[count.index])[0]
+  port_range_min    = split("/",var.RKE-share-ports[count.index])[0] == "1" ? "1" : length(regexall("-", split("/",var.RKE-share-ports[count.index])[0])) > 0 ? split("-",split("/",var.RKE-share-ports[count.index])[0])[0] : split("/",var.RKE-share-ports[count.index])[0] 
+  port_range_max    = split("/",var.RKE-share-ports[count.index])[0] == "1" ? "65535" : length(regexall("-", split("/",var.RKE-share-ports[count.index])[0])) > 0 ? split("-",split("/",var.RKE-share-ports[count.index])[0])[1] : split("/",var.RKE-share-ports[count.index])[0]
   remote_ip_prefix  = "${var.OS_CIDR}"
   security_group_id = "${openstack_compute_secgroup_v2.kuberntes_secgroup_server.id}"
 }
@@ -63,8 +63,8 @@ resource "openstack_networking_secgroup_rule_v2" "kubernetes_secgrouprule_share"
   direction         = "ingress"
   ethertype         = "IPv4"
   protocol          = split("/",var.RKE-share-ports[count.index])[1]
-  port_range_min    = split("/",var.RKE-share-ports[count.index])[0] == "1" ? "1" : split("/",var.RKE-share-ports[count.index])[0]
-  port_range_max    = split("/",var.RKE-share-ports[count.index])[0] == "1" ? "65535" : split("/",var.RKE-share-ports[count.index])[0]
+  port_range_min    = split("/",var.RKE-share-ports[count.index])[0] == "1" ? "1" : length(regexall("-", split("/",var.RKE-share-ports[count.index])[0])) > 0 ? split("-",split("/",var.RKE-share-ports[count.index])[0])[0] : split("/",var.RKE-share-ports[count.index])[0] 
+  port_range_max    = split("/",var.RKE-share-ports[count.index])[0] == "1" ? "65535" : length(regexall("-", split("/",var.RKE-share-ports[count.index])[0])) > 0 ? split("-",split("/",var.RKE-share-ports[count.index])[0])[1] : split("/",var.RKE-share-ports[count.index])[0]
   remote_ip_prefix  = "${var.OS_CIDR}"
   security_group_id = "${openstack_compute_secgroup_v2.kuberntes_secgroup_share.id}"
 }
