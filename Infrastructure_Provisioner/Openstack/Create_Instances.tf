@@ -68,3 +68,47 @@ resource "openstack_networking_secgroup_rule_v2" "kubernetes_secgrouprule_share"
   remote_ip_prefix  = "${var.OS_CIDR}"
   security_group_id = "${openstack_compute_secgroup_v2.kuberntes_secgroup_share.id}"
 }
+
+######define instance interfaces ######
+resource "openstack_networking_port_v2" "kubernetes_Master_Instances_interface" {
+  depends_on = [openstack_compute_secgroup_v2.kuberntes_secgroup_server]
+  count          = var.Number_Of_Masters
+  name           = "Master_port_${count.index}"
+  network_id     = openstack_networking_network_v2.kuberntes_network.id
+  admin_state_up = true
+  security_group_ids = [
+    openstack_compute_secgroup_v2.server.id,
+    openstack_compute_secgroup_v2.share.id
+  ]
+  fixed_ip {
+    subnet_id = openstack_networking_subnet_v2.kubernetes_Instance_Subnet.id
+  }
+}
+
+resource "openstack_networking_port_v2" "kubernetes_Agent_Instances_interface" {
+  depends_on = [openstack_compute_secgroup_v2.kuberntes_secgroup_share]
+  count          = var.Number_of_Workers
+  name           = "Work_port_${count.index}"
+  network_id     = openstack_networking_network_v2.kuberntes_network.id
+  admin_state_up = true
+  security_group_ids = [
+    openstack_compute_secgroup_v2.share.id
+  ]
+  fixed_ip {
+    subnet_id = openstack_networking_subnet_v2.kubernetes_Instance_Subnet.id
+  }
+}
+
+resource "openstack_networking_port_v2" "kubernetes_Master_Instances_interface" {
+  depends_on = [openstack_compute_secgroup_v2.kuberntes_secgroup_server]
+  name           = "LB_port"
+  network_id     = openstack_networking_network_v2.kuberntes_network.id
+  admin_state_up = true
+  security_group_ids = [
+    openstack_compute_secgroup_v2.server.id,
+    openstack_compute_secgroup_v2.share.id
+  ]
+  fixed_ip {
+    subnet_id = openstack_networking_subnet_v2.kubernetes_Instance_Subnet.id
+  }
+}
