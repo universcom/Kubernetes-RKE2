@@ -112,3 +112,20 @@ resource "openstack_networking_port_v2" "kubernetes_Master_Instances_interface" 
     subnet_id = openstack_networking_subnet_v2.kubernetes_Instance_Subnet.id
   }
 }
+
+#####define keypair#####
+resource "openstack_compute_keypair_v2" "DBaaS_admin_user_key" {
+  name       = "${var.na}"
+}
+
+##### Get image ID #####
+data "openstack_images_image_v2" "DBaaS_Image_id" {
+  name        = "${var.OS_IMG_ID}"
+  most_recent = true
+}
+
+
+
+
+
+
