@@ -92,3 +92,10 @@ variable "RKE-share-ports" {
     "1/icmp"
   ]  
 }
+
+variable "RKE-LB-ports" {
+  type = list
+  default = [
+    "22/tcp", "80/tcp", "443/tcp"
+  ]
+}

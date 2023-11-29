@@ -46,6 +46,12 @@ resource "openstack_compute_secgroup_v2" "kuberntes_secgroup_share" {
   description = "share between all hosts"
 }
 
+resource "openstack_compute_secgroup_v2" "kuberntes_secgroup_lb" {
+  depends_on  = [openstack_networking_router_interface_v2.kuberntes_router_interface_1]
+  name        = "${var.name}_LB_kuberntes_security_Group"
+  description = "for LB only"
+}
+
 ##### Assign port to security group #####
 resource "openstack_networking_secgroup_rule_v2" "kubernetes_secgrouprule_server"{
   depends_on = [openstack_compute_secgroup_v2.kuberntes_secgroup_server]
@@ -69,6 +75,18 @@ resource "openstack_networking_secgroup_rule_v2" "kubernetes_secgrouprule_share"
   port_range_max    = split("/",var.RKE-share-ports[count.index])[0] == "1" ? "65535" : length(regexall("-", split("/",var.RKE-share-ports[count.index])[0])) > 0 ? split("-",split("/",var.RKE-share-ports[count.index])[0])[1] : split("/",var.RKE-share-ports[count.index])[0]
   remote_ip_prefix  = split("/",var.RKE-share-ports[count.index])[1] != "icmp" ? "${var.OS_CIDR}" : "0.0.0.0/0"
   security_group_id = "${openstack_compute_secgroup_v2.kuberntes_secgroup_share.id}"
+}
+
+resource "openstack_networking_secgroup_rule_v2" "kubernetes_secgrouprule_lb"{
+  depends_on = [openstack_compute_secgroup_v2.kuberntes_secgroup_share]
+  count = length(var.RKE-LB-ports)
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = split("/",var.RKE-LB-ports[count.index])[1]
+  port_range_min    = split("/",var.RKE-LB-ports[count.index])[0] == "1" ? "1" : length(regexall("-", split("/",var.RKE-LB-ports[count.index])[0])) > 0 ? split("-",split("/",var.RKE-LB-ports[count.index])[0])[0] : split("/",var.RKE-LB-ports[count.index])[0] 
+  port_range_max    = split("/",var.RKE-LB-ports[count.index])[0] == "1" ? "65535" : length(regexall("-", split("/",var.RKE-LB-ports[count.index])[0])) > 0 ? split("-",split("/",var.RKE-LB-ports[count.index])[0])[1] : split("/",var.RKE-LB-ports[count.index])[0]
+  remote_ip_prefix  = "0.0.0.0/0"
+  security_group_id = "${openstack_compute_secgroup_v2.kuberntes_secgroup_lb.id}"
 }
 
 ######define instance interfaces ######
@@ -108,7 +126,8 @@ resource "openstack_networking_port_v2" "kubernetes_LB_Instance_interface" {
   admin_state_up = true
   security_group_ids = [
     openstack_compute_secgroup_v2.kuberntes_secgroup_server.id,
-    openstack_compute_secgroup_v2.kuberntes_secgroup_share.id
+    openstack_compute_secgroup_v2.kuberntes_secgroup_share.id,
+    openstack_compute_secgroup_v2.kuberntes_secgroup_lb.id
   ]
   fixed_ip {
     subnet_id = openstack_networking_subnet_v2.kuberntes_subnet.id
