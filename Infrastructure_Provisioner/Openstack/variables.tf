@@ -10,11 +10,10 @@ variable "auth_domain" { default = "default" }
 #Openstack Instances Specifications
 variable "name" { description = "this value an aribitry name for Openstack objects" }
 variable "OS_IMG_ID" {}
-variable "OS_flavor_ID" {}
 variable "OS_CIDR" {}
-variable "OS_DNS" {}
+variable "OS_DNS" {type = string}
 variable "OS_external_network_ID" {}
-
+variable "OS_external_network_Name" {}
 
 
 #Kuberntes Specifications
@@ -59,9 +58,15 @@ variable "Ingress_type" {
     default = "nginx"
 }
 
-variable "POD_CIDR" {}
+variable "POD_CIDR" {
+    type = string
+    default = "10.0.1.0/24"
+}
 
-variable "Service_CIDR" {}
+variable "Service_CIDR" {
+    type = string
+    default = "10.0.2.0/24"
+}
 
 variable "registry_mirror" {
     type = string
@@ -80,8 +85,8 @@ variable "RKE-server-ports" {
 variable "RKE-share-ports" {
   type = list
   default = [
-    "8472/udp", "51820/udp", "51821/udp", "8472/udp", "4789/udp",
-    "10250/tcp", "9099/tcp", "5473/tcp", "9098/tcp", "9099/tcp", "179/tcp", "4240/tcp", 
+    "8472/udp", "51820/udp", "51821/udp", "4789/udp",
+    "10250/tcp", "9099/tcp", "5473/tcp", "9098/tcp", "179/tcp", "4240/tcp", 
     "2379/tcp", "2380/tcp", "2381/tcp",
     "30000-32767/tcp",
     "1/icmp"
