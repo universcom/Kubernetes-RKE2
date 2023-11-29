@@ -18,3 +18,8 @@ provider "openstack" {
   region       = var.auth_region
   domain_name  = var.auth_domain
 }
+
+output "terraform-provider" {
+    value = "Connected with openstack at ${var.auth_url}"
+  
+}
