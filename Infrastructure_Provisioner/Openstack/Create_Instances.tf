@@ -212,7 +212,7 @@ resource "openstack_networking_floatingip_v2" "LB_floatingIP" {
   pool = "${var.OS_external_network_Name}"
 }
 
-#assign floating IP to LB
+#associate floating IP to LB
 resource "openstack_compute_floatingip_associate_v2" "LB_floatingIP-associate" {
   depends_on = [ openstack_networking_floatingip_v2.LB_floatingIP ]
   floating_ip = openstack_networking_floatingip_v2.LB_floatingIP.address
@@ -221,6 +221,15 @@ resource "openstack_compute_floatingip_associate_v2" "LB_floatingIP-associate" {
 
 
 
+############################ outputs ############################
+#LB floating IP
+output "LB_floating_IP" {
+  depends_on = [openstack_compute_floatingip_associate_v2.LB_floatingIP-associate]
+  value = openstack_compute_floatingip_associate_v2.LB_floatingIP-associate.floating_ip
+}
 
-
-
+output "LB_private_key" {
+  depends_on = [openstack_compute_keypair_v2.kubernetes_admin_user_key]
+  value = openstack_compute_keypair_v2.kubernetes_admin_user_key.private_key
+  sensitive = true
+}
