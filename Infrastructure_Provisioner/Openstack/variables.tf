@@ -16,7 +16,15 @@ variable "OS_DNS" {}
 variable "OS_external_network_ID" {}
 
 
+
 #Kuberntes Specifications
+variable "Worker_flavor" {}
+variable "Master_flavor" {}
+variable "LB_flavor" {}
+variable "volume_root_size" {
+  type = string
+  default = "20"
+}
 variable "Number_Of_Masters" {
   type = number
   default = 1

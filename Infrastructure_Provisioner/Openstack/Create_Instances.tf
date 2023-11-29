@@ -35,12 +35,12 @@ resource "openstack_networking_router_interface_v2" "kuberntes_router_interface_
 
 ##### define security group #####
 resource "openstack_compute_secgroup_v2" "kuberntes_secgroup_server" {
-  depends_on = [openstack_networking_router_interface_v2.DBaaS_router_interface_1]
+  depends_on = [openstack_networking_router_interface_v2.kuberntes_router_interface_1]
   name        = "${var.name}_Server_kuberntes_security_Group"
 }
 
 resource "openstack_compute_secgroup_v2" "kuberntes_secgroup_share" {
-  depends_on = [openstack_networking_router_interface_v2.DBaaS_router_interface_1]
+  depends_on = [openstack_networking_router_interface_v2.kuberntes_router_interface_1]
   name        = "${var.name}_Share_kuberntes_security_Group"
 }
 
@@ -114,16 +114,72 @@ resource "openstack_networking_port_v2" "kubernetes_Master_Instances_interface" 
 }
 
 #####define keypair#####
-resource "openstack_compute_keypair_v2" "DBaaS_admin_user_key" {
+resource "openstack_compute_keypair_v2" "kubernetes_admin_user_key" {
   name       = "${var.na}"
 }
 
 ##### Get image ID #####
-data "openstack_images_image_v2" "DBaaS_Image_id" {
+data "openstack_images_image_v2" "kuberntes_Image_id" {
   name        = "${var.OS_IMG_ID}"
   most_recent = true
 }
 
+#create_instances
+resource "openstack_compute_instance_v2" "kubernetes_Master_Instances" {
+  depends_on = [openstack_compute_keypair_v2.kubernetes_admin_user_key]
+  count       = var.Number_Of_Masters 
+  name        = "Master-${count.index}"
+  image_name  = "${var.image}"
+  flavor_name = "${var.Master_flavor}"
+  key_pair    = openstack_compute_keypair_v2.kubernetes_admin_user_key.name
+  network {
+    port = openstack_networking_port_v2.kubernetes_Master_Instances_interface[count.index].id
+  }
+  block_device {
+    volume_size           = "${var.volume_root_size}"
+    destination_type      = "volume"
+    delete_on_termination = true
+    source_type           = "image"
+    uuid                  = data.openstack_images_image_v2.kuberntes_Image_id.id
+  }
+}
+
+resource "openstack_compute_instance_v2" "kubernetes_Worker_Instances" {
+  depends_on = [openstack_compute_keypair_v2.kubernetes_admin_user_key]
+  count       = var.Number_of_Workers 
+  name        = "Worker-${count.index}"
+  image_name  = "${var.image}"
+  flavor_name = "${var.Worker_flavor}"
+  key_pair    = openstack_compute_keypair_v2.kubernetes_admin_user_key.name
+  network {
+    port = openstack_networking_port_v2.kubernetes_Worker_Instances[count.index].id
+  }
+  block_device {
+    volume_size           = "${var.volume_root_size}"
+    destination_type      = "volume"
+    delete_on_termination = true
+    source_type           = "image"
+    uuid                  = data.openstack_images_image_v2.kuberntes_Image_id.id
+  }
+ }
+
+resource "openstack_compute_instance_v2" "kubernetes_LB_Instance" {
+  depends_on = [openstack_compute_keypair_v2.kubernetes_admin_user_key]
+  name        = "LB"
+  image_name  = "${var.image}"
+  flavor_name = "${var.LB_flavor}"
+  key_pair    = openstack_compute_keypair_v2.kubernetes_admin_user_key.name
+  network {
+    port = openstack_networking_port_v2.kubernetes_LB_Instance
+  }
+  block_device {
+    volume_size           = "${var.volume_root_size}"
+    destination_type      = "volume"
+    delete_on_termination = true
+    source_type           = "image"
+    uuid                  = data.openstack_images_image_v2.kuberntes_Image_id.id
+  }
+ }
 
 
 
