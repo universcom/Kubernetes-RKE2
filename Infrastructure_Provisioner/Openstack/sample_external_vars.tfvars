@@ -12,6 +12,7 @@ OS_IMG_ID = ""
 OS_CIDR = ""
 OS_DNS = ""
 OS_external_network_ID = ""
+OS_external_network_Name = ""
 
 
 
