@@ -67,7 +67,7 @@ resource "openstack_networking_secgroup_rule_v2" "kubernetes_secgrouprule_share"
   protocol          = split("/",var.RKE-share-ports[count.index])[1]
   port_range_min    = split("/",var.RKE-share-ports[count.index])[0] == "1" ? "1" : length(regexall("-", split("/",var.RKE-share-ports[count.index])[0])) > 0 ? split("-",split("/",var.RKE-share-ports[count.index])[0])[0] : split("/",var.RKE-share-ports[count.index])[0] 
   port_range_max    = split("/",var.RKE-share-ports[count.index])[0] == "1" ? "65535" : length(regexall("-", split("/",var.RKE-share-ports[count.index])[0])) > 0 ? split("-",split("/",var.RKE-share-ports[count.index])[0])[1] : split("/",var.RKE-share-ports[count.index])[0]
-  remote_ip_prefix  = "${var.OS_CIDR}"
+  remote_ip_prefix  = split("/",var.RKE-share-ports[count.index])[1] != "icmp" ? "${var.OS_CIDR}" : "0.0.0.0/0"
   security_group_id = "${openstack_compute_secgroup_v2.kuberntes_secgroup_share.id}"
 }
 
