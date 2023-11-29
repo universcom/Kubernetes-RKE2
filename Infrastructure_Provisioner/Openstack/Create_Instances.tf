@@ -99,7 +99,7 @@ resource "openstack_networking_port_v2" "kubernetes_Agent_Instances_interface" {
   }
 }
 
-resource "openstack_networking_port_v2" "kubernetes_Master_Instances_interface" {
+resource "openstack_networking_port_v2" "kubernetes_LB_Instances_interface" {
   depends_on = [openstack_compute_secgroup_v2.kuberntes_secgroup_server]
   name           = "LB_port"
   network_id     = openstack_networking_network_v2.kuberntes_network.id
