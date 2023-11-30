@@ -19,9 +19,9 @@ events {
 stream {
 upstream backend {
         least_conn;
-        %{ for ip in Master_nodes[*].access_ip_v4 ~}
+        %{ for ip in Master_nodes[*].access_ip_v4 }
         server "${ip}":9345 max_fails=3 fail_timeout=5s;
-        %{ endfor ~}
+        %{ endfor }
    }
 
    # This server accepts all traffic to port 9345 and passes it to the upstream. 
@@ -34,9 +34,9 @@ upstream backend {
    }
     upstream rancher_api {
         least_conn;
-        %{ for ip in Master_nodes[*].access_ip_v4 ~}
+        %{ for ip in Master_nodes[*].access_ip_v4 }
         server "${ip}":6443 max_fails=3 fail_timeout=5s;
-        %{ endfor ~}
+        %{ endfor }
     }
         server {
         listen     6443;
@@ -44,9 +44,9 @@ upstream backend {
         }
     upstream rancher_http {
         least_conn;
-        %{ for ip in Master_nodes[*].access_ip_v4 ~}
+        %{ for ip in Master_nodes[*].access_ip_v4 }
         server "${ip}":80 max_fails=3 fail_timeout=5s;
-        %{ endfor ~}
+        %{ endfor }
     }
         server {
         listen     80;
@@ -54,9 +54,9 @@ upstream backend {
         }
     upstream rancher_https {
         least_conn;
-        %{ for ip in Master_nodes[*].access_ip_v4 ~}
+        %{ for ip in Master_nodes[*].access_ip_v4 }
         server "${ip}":443 max_fails=3 fail_timeout=5s;
-        %{ endfor ~}
+        %{ endfor }
     }
         server {
         listen     443;
