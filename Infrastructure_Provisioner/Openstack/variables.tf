@@ -20,6 +20,10 @@ variable "OS_external_network_Name" {}
 variable "Worker_flavor" {}
 variable "Master_flavor" {}
 variable "LB_flavor" {}
+variable "cluster_FQDN" {
+  type = string
+  default = "local.cloud"
+}
 variable "volume_root_size" {
   type = string
   default = "20"
