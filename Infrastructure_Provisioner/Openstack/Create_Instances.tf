@@ -233,3 +233,18 @@ output "LB_private_key" {
   value = openstack_compute_keypair_v2.kubernetes_admin_user_key.private_key
   sensitive = true
 }
+
+output "Master_nodes" {
+  depends_on = [ openstack_compute_instance_v2.kubernetes_Master_Instances ]
+  value = openstack_compute_instance_v2.kubernetes_Master_Instances
+}
+
+output "Worker_nodes" {
+  depends_on = [ openstack_compute_instance_v2.kubernetes_Worker_Instances ]
+  value = openstack_compute_instance_v2.kubernetes_Worker_Instances
+}
+
+output "LB_node" {
+  depends_on = [ openstack_compute_instance_v2.kubernetes_LB_Instance ]
+  value = openstack_compute_instance_v2.kubernetes_LB_Instance
+}
