@@ -19,8 +19,8 @@ events {
 stream {
 upstream backend {
         least_conn;
-        %{ for ip in Master_nodes[*].access_ip_v4 }
-        server "${ip}":9345 max_fails=3 fail_timeout=5s;
+        %{ for ip in openstack_compute_instance_v2.kubernetes_Master_Instances }
+        server "${ip.access_ip_v4}":9345 max_fails=3 fail_timeout=5s;
         %{ endfor }
    }
 
@@ -34,8 +34,8 @@ upstream backend {
    }
     upstream rancher_api {
         least_conn;
-        %{ for ip in Master_nodes[*].access_ip_v4 }
-        server "${ip}":6443 max_fails=3 fail_timeout=5s;
+        %{ for ip in openstack_compute_instance_v2.kubernetes_Master_Instances }
+        server "${ip.access_ip_v4}":6443 max_fails=3 fail_timeout=5s;
         %{ endfor }
     }
         server {
@@ -44,8 +44,8 @@ upstream backend {
         }
     upstream rancher_http {
         least_conn;
-        %{ for ip in Master_nodes[*].access_ip_v4 }
-        server "${ip}":80 max_fails=3 fail_timeout=5s;
+        %{ for ip in openstack_compute_instance_v2.kubernetes_Master_Instances }
+        server "${ip.access_ip_v4}":80 max_fails=3 fail_timeout=5s;
         %{ endfor }
     }
         server {
@@ -54,8 +54,8 @@ upstream backend {
         }
     upstream rancher_https {
         least_conn;
-        %{ for ip in Master_nodes[*].access_ip_v4 }
-        server "${ip}":443 max_fails=3 fail_timeout=5s;
+        %{ for ip in openstack_compute_instance_v2.kubernetes_Master_Instances }
+        server "${ip.access_ip_v4}":443 max_fails=3 fail_timeout=5s;
         %{ endfor }
     }
         server {
