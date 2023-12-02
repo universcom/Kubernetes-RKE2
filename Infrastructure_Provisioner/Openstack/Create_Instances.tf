@@ -226,6 +226,7 @@ resource "openstack_compute_floatingip_associate_v2" "LB_floatingIP-associate" {
 output "LB_floating_IP" {
   depends_on = [openstack_compute_floatingip_associate_v2.LB_floatingIP-associate]
   value = openstack_compute_floatingip_associate_v2.LB_floatingIP-associate.floating_ip
+  sensitive = true
 }
 
 output "LB_private_key" {
@@ -237,14 +238,17 @@ output "LB_private_key" {
 output "Master_nodes" {
   depends_on = [ openstack_compute_instance_v2.kubernetes_Master_Instances ]
   value = openstack_compute_instance_v2.kubernetes_Master_Instances
+  sensitive = true
 }
 
 output "Worker_nodes" {
   depends_on = [ openstack_compute_instance_v2.kubernetes_Worker_Instances ]
   value = openstack_compute_instance_v2.kubernetes_Worker_Instances
+  sensitive = true
 }
 
 output "LB_node" {
   depends_on = [ openstack_compute_instance_v2.kubernetes_LB_Instance ]
   value = openstack_compute_instance_v2.kubernetes_LB_Instance
+  sensitive = true
 }
