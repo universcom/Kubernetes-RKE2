@@ -4,8 +4,7 @@ resource "local_file" "rke2_configs" {
   content = <<-EOF
 write-kubeconfig-mode: "0644"
 tls-san:
- - LB.${cluster_FQDN}
- - ${LB_node.access_ip_v4}
+ - LB.${var.cluster_FQDN}
+ - ${openstack_compute_instance_v2.kubernetes_LB_Instance.access_ip_v4}
   EOF
 }
-
