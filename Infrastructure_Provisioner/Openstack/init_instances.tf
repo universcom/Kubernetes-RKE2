@@ -25,4 +25,12 @@ resource "null_resource" "init_LB" {
     source = "config_files/hosts"
     destination = "/etc/hosts"
   }
+  provisioner "file" {
+    source = "config_files/nginx.conf"
+    destination = "/etc/nginx/nginx.conf"
+    }
+  provisioner "remote-exec" {
+    inline = [ "sudo service nginx reload" ]
+      
+    }
 }
