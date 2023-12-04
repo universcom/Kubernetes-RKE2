@@ -1,6 +1,6 @@
 resource "null_resource" "init_LB" {
   depends_on = [
-  module.lunch_instances
+  openstack_compute_floatingip_associate_v2.LB_floatingIP-associate
   ]
   #connect to instances with ssh
   connection {
@@ -8,7 +8,7 @@ resource "null_resource" "init_LB" {
     user = "ubuntu"
     timeout = "5m"
     private_key = "${openstack_compute_keypair_v2.kubernetes_admin_user_key.private_key}"
-    host = "${openstack_compute_instance_v2.kubernetes_LB_Instance.floating_ip}"
+    host = "${openstack_compute_floatingip_associate_v2.LB_floatingIP-associate.floating_ip}"
     port = "22"
   }
   provisioner "remote-exec" {
